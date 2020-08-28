@@ -1,5 +1,17 @@
 //JPanel is the actual black space the game will be designed in.
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Stroke;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+
 import javax.swing.JPanel;
+import javax.swing.Timer;
 //timer library
 import javax.swing.Timer;
 //Adds color functionality
@@ -19,6 +31,19 @@ public class PongPanel extends JPanel implements ActionListener, KeyListener{
 	private final static Color BACKGROUND_COLOUR = Color.BLACK;
 	//setting a constant variable for the timer delay
 	private final static int TIMER_DELAY = 5;
+	GameState gameState = GameState.Initialising;
+	Ball ball;
+	Paddle paddle1;
+	Paddle paddle2;
+	
+	
+	
+	public void createObjects() {
+		ball = new Ball(getWidth(), getHeight());
+		paddle1 = new Paddle(Player.One, getWidth(), getHeight());
+		paddle2 = new Paddle(Player.Two, getWidth(), getHeight());
+	}
+	
 	
 	//pong panel constructor
 	public PongPanel() {
@@ -42,6 +67,11 @@ public class PongPanel extends JPanel implements ActionListener, KeyListener{
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		paintDottedLine(g);
+		 if(gameState != GameState.Initialising) {
+             paintSprite(g, ball);
+             paintSprite(g, paddle1);
+             paintSprite(g, paddle2);
+         }
 	}
 	
 	//paint the middle dotted line everytime this method is called
@@ -59,8 +89,29 @@ public class PongPanel extends JPanel implements ActionListener, KeyListener{
 	
 	public void update() {
 		
+		switch(gameState) {
+		
+        	case Initialising: {
+        		createObjects();
+        		gameState = GameState.Playing;
+        		break;
+        		}
+        		case Playing: {
+        		break;
+        		}
+        		case GameOver: {
+        		break;
+        		}
+		}
 	}
-	//adding unimplemented methods adds these keyTyped
+	
+	private void paintSprite(Graphics g, Sprite sprite) {
+		g.setColor(sprite.getColour());
+		g.fillRect(sprite.getXPosition(), sprite.getYPosition(), sprite.getWidth(), sprite.getWidth());
+	}
+	
+	
+	//adding unimplemented methods in the error tool adds these keyTyped
 	//keyPressed, KeyReleased and actionPerformed methods
 	@Override
 	public void keyTyped(KeyEvent event) {
