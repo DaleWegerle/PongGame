@@ -1,5 +1,9 @@
+//JFrame creates the window
 import javax.swing.JFrame;
+import java.awt.Color;
 
+
+//extends the JFrame library. (JFrame creates windows)
 public class Pong extends JFrame{
 	
 	//setting the constant values to be final and static
@@ -13,6 +17,8 @@ public class Pong extends JFrame{
 	private final static int WINDOW_WIDTH = 800;
 	private final static int WINDOW_HEIGHT = 600;
 	
+	
+	
 	//Pong constructor provides configuration 
 	//for our window
 	public Pong() {
@@ -21,6 +27,9 @@ public class Pong extends JFrame{
 		setResizable(false);
 		setVisible(true);//if false the window will disappear
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
+		//adding JPanel(PongPanel) to the frame (JFrame)
+		add(new PongPanel());
+		
 	}
 
 	public static void main(String[] args) {
