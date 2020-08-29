@@ -31,6 +31,7 @@ public class PongPanel extends JPanel implements ActionListener, KeyListener{
 	private final static Color BACKGROUND_COLOUR = Color.BLACK;
 	//setting a constant variable for the timer delay
 	private final static int TIMER_DELAY = 5;
+	private final static int BALL_MOVEMENT_SPEED = 2;
 	GameState gameState = GameState.Initialising;
 	Ball ball;
 	Paddle paddle1;
@@ -40,7 +41,7 @@ public class PongPanel extends JPanel implements ActionListener, KeyListener{
 	
 	public void createObjects() {
 		ball = new Ball(getWidth(), getHeight());
-		paddle1 = new Paddle(Player.One, getWidth(), getHeight());
+		paddle1 = new Paddle(Player.One, getHeight(), getWidth() );
 		paddle2 = new Paddle(Player.Two, getWidth(), getHeight());
 	}
 	
@@ -55,6 +56,8 @@ public class PongPanel extends JPanel implements ActionListener, KeyListener{
     	//game logic.
         Timer timer = new Timer(TIMER_DELAY, this);
         timer.start();
+        addKeyListener(this);
+        setFocusable(true);
     }
 	
 	//this method paint the objects to the screen
@@ -92,12 +95,18 @@ public class PongPanel extends JPanel implements ActionListener, KeyListener{
 		switch(gameState) {
 		
         	case Initialising: {
-        		createObjects();
-        		gameState = GameState.Playing;
-        		break;
+        			createObjects();
+        			gameState = GameState.Playing;
+        			ball.setXVelocity(BALL_MOVEMENT_SPEED);
+        			ball.setYVelocity(BALL_MOVEMENT_SPEED);
+        			break;
         		}
         		case Playing: {
-        		break;
+        			moveObject(ball);
+        			checkWallBounce();     
+        			moveObject(paddle1);
+        			moveObject(paddle2);
+        			break;
         		}
         		case GameOver: {
         		break;
@@ -108,6 +117,31 @@ public class PongPanel extends JPanel implements ActionListener, KeyListener{
 	private void paintSprite(Graphics g, Sprite sprite) {
 		g.setColor(sprite.getColour());
 		g.fillRect(sprite.getXPosition(), sprite.getYPosition(), sprite.getWidth(), sprite.getWidth());
+	}
+	
+	private void moveObject(Sprite object) {
+		object.setXPosition(object.getXPosition() + object.getXVelocity(), getWidth());
+		object.setYPosition(object.getYPosition() + object.getYVelocity(), getHeight());
+		
+	}
+	
+	private void resetBall() {
+		ball.resetToInitialPosition();
+	}
+	
+	private void checkWallBounce() {
+		//hit left screen?
+		if(ball.getXPosition() <= 0){
+			ball.setXVelocity(-ball.getXVelocity());
+			resetBall();
+			//hit right screen?
+		}else if (ball.getXPosition() >= getWidth() - ball.getWidth()) {
+			ball.setXVelocity(-ball.getXVelocity());
+			resetBall();
+		}if(ball.getYPosition() <= 0 || ball.getYPosition() >= getHeight() - ball.getHeight()) {
+			//hit top or bottom of screen
+			ball.setYVelocity(-ball.getYVelocity());
+		}
 	}
 	
 	
@@ -131,13 +165,27 @@ public class PongPanel extends JPanel implements ActionListener, KeyListener{
 	//receive a warning if we haven’t.
 	@Override
 	public void keyPressed(KeyEvent event) {
-		// TODO Auto-generated method stub
+		if(event.getKeyCode() == KeyEvent.VK_W) {
+            paddle1.setYVelocity(-1);
+        } else if(event.getKeyCode() == KeyEvent.VK_S) {
+            paddle1.setYVelocity(1);
+        }
+        if(event.getKeyCode() == KeyEvent.VK_UP) {
+            paddle2.setYVelocity(-1);
+        } else if(event.getKeyCode() == KeyEvent.VK_DOWN) {
+            paddle2.setYVelocity(1);
+        }
 		
 	}
 
 	@Override
 	public void keyReleased(KeyEvent event) {
-		// TODO Auto-generated method stub
+	    if(event.getKeyCode() == KeyEvent.VK_W || event.getKeyCode() == KeyEvent.VK_S) {
+            paddle1.setYVelocity(0);
+        }
+        if(event.getKeyCode() == KeyEvent.VK_UP || event.getKeyCode() == KeyEvent.VK_DOWN) {
+            paddle2.setYVelocity(0);
+        }
 		
 	}
 
