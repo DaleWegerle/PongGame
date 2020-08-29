@@ -89,6 +89,15 @@ public class PongPanel extends JPanel implements ActionListener, KeyListener{
         g2d.dispose();
 		
 	}
+	//if the ball and paddle rectangles intersect. If they do, 
+	//then reverse the x velocity of the ball.
+	public void checkPaddleBounce() {
+		if(ball.getXVelocity() < 0 && ball.getRectangle().intersects(paddle1.getRectangle())) {
+	          ball.setXVelocity(BALL_MOVEMENT_SPEED);
+	      }
+	      if(ball.getXVelocity() > 0 && ball.getRectangle().intersects(paddle2.getRectangle())) {
+	          ball.setXVelocity(-BALL_MOVEMENT_SPEED);
+	}}
 	
 	public void update() {
 		
@@ -103,7 +112,8 @@ public class PongPanel extends JPanel implements ActionListener, KeyListener{
         		}
         		case Playing: {
         			moveObject(ball);
-        			checkWallBounce();     
+        			checkWallBounce();  
+        			checkPaddleBounce();
         			moveObject(paddle1);
         			moveObject(paddle2);
         			break;
